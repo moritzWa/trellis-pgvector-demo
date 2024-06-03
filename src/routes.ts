@@ -1,3 +1,4 @@
+import { EmailExtractionController } from "./controller/EmailExtractionController";
 import { UserController } from "./controller/UserController";
 
 export const Routes = [
@@ -24,5 +25,18 @@ export const Routes = [
     route: "/users/:id",
     controller: UserController,
     action: "remove",
+  },
+  // trellis
+  {
+    method: "post",
+    route: "/emails",
+    controller: EmailExtractionController,
+    action: "save",
+  },
+  {
+    method: "get",
+    route: "/emails",
+    controller: EmailExtractionController,
+    action: "all",
   },
 ];
