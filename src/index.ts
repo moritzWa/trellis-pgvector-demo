@@ -2,6 +2,9 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 AppDataSource.initialize()
   .then(() => {

@@ -39,4 +39,10 @@ export const Routes = [
     controller: EmailExtractionController,
     action: "all",
   },
+  {
+    method: "post",
+    route: "/upload-emails",
+    controller: EmailExtractionController,
+    action: "uploadEmailAssets",
+  },
 ];
