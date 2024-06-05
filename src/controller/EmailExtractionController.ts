@@ -17,7 +17,7 @@ export class EmailExtractionController {
       .readdirSync(directoryPath)
       .filter((file) => !file.startsWith("."));
 
-    // Append each file to the form-data
+    // Add files, ext_ids and ext_file_names to the form data
     files.forEach((file) => {
       formData.append(
         "files",
@@ -25,21 +25,26 @@ export class EmailExtractionController {
         file
       );
     });
+    const extIds = files.map((file) => file.replace(".txt", ""));
+    const extFileNames = files;
 
-    // Append external IDs (using file names here)
-    files.forEach((file) => {
-      formData.append("ext_ids", file.replace(".txt", ""));
+    extIds.forEach((extId) => {
+      formData.append("ext_ids", extId);
     });
 
-    // Append external file names
-    files.forEach((file) => {
-      formData.append("ext_file_names", file);
+    extFileNames.forEach((extFileName) => {
+      formData.append("ext_file_names", extFileName);
     });
 
-    formData.append("auth_key", process.env.TRELLIS_API_KEY);
+    // formData.append("auth_key", process.env.TRELLIS_API_KEY);
     formData.append("file_types", "txt");
     formData.append("proj_name", "enron_email_extraction");
     // callback todo
+
+    // console.log("formData 123", JSON.stringify(formData));y
+    console.log("files 123", JSON.stringify(files));
+    console.log("extIds 123", JSON.stringify(extIds));
+    console.log("extFileNames 123", JSON.stringify(extFileNames));
 
     try {
       const res = await axios.post(
@@ -49,6 +54,7 @@ export class EmailExtractionController {
           headers: {
             ...formData.getHeaders(),
             Accept: "application/json",
+            Authorization: process.env.TRELLIS_API_KEY,
           },
         }
       );
