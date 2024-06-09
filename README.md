@@ -2,11 +2,11 @@ This is a demo for how to use [Trellis](https://usetrellis.co/) for unstructured
 
 # Commands
 
-## Docker
+## Docker for running Postgres
 
-Run `docker compose up -d` to start the docker container with the database
-
-Run `docker compose down` to stop the container. This will wipe the database.
+1. Start the docker application.
+2. Run `docker compose up -d` to start the docker container with the database
+3. Run `docker compose down` to stop the container. This will wipe the database.
 
 ## Server
 
