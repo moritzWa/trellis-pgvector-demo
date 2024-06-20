@@ -11,32 +11,30 @@ export class EmailExtractionController {
     AppDataSource.getRepository(EmailExtraction);
 
   async uploadEmailAssets(request: Request, response: Response) {
-    const formData = new FormData();
+    const batchSize = 2;
+    const projectName = "file_batches";
+
     const directoryPath = path.join(__dirname, "..", "assets");
-    const files = fs
+    const allFiles = fs
       .readdirSync(directoryPath)
       .filter((file) => !file.startsWith("."));
 
-    if (files.length > 0) {
-      formData.append("proj_name", "enron_email_extraction_20_june_multi_file");
+    for (let i = 0; i < allFiles.length; i += batchSize) {
+      const batchFiles = allFiles.slice(i, i + batchSize);
+      const formData = new FormData();
 
-      // Add files, ext_ids and ext_file_names to the form data
-      files.forEach((file) => {
+      batchFiles.forEach((file) => {
+        const extId = file.replace(".txt", "");
         formData.append(
           "files",
           fs.createReadStream(path.join(directoryPath, file))
         );
-      });
-      const extIds = files.map((file) => file.replace(".txt", ""));
-      const extFileNames = files;
-
-      extIds.forEach((extId) => {
         formData.append("ext_ids", extId);
+        formData.append("ext_file_names", file);
+        formData.append("file_types", "txt");
       });
 
-      extFileNames.forEach((extFileName) => {
-        formData.append("ext_file_names", extFileName);
-      });
+      formData.append("proj_name", projectName);
 
       try {
         const res = await axios.post(
@@ -50,15 +48,16 @@ export class EmailExtractionController {
             },
           }
         );
-
-        response.json(res.data);
+        console.log(`Batch ${i / batchSize + 1}: Upload successful`);
       } catch (error) {
-        console.error("Failed to upload email assets:", error);
-        response.status(500).send("Failed to upload email assets");
+        console.error(`Failed to upload batch ${i / batchSize + 1}:`, error);
+        response
+          .status(500)
+          .send(`Failed to upload batch ${i / batchSize + 1}`);
       }
-    } else {
-      response.status(400).send("No files found in the directory.");
     }
+
+    response.send("All batches uploaded successfully.");
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
