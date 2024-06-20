@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { AppDataSource } from "../data-source";
-import { EmailExtraction } from "../entity/EmailExtraction";
 import axios from "axios";
+import { NextFunction, Request, Response } from "express";
 import * as fs from "fs";
 import * as path from "path";
+import { AppDataSource } from "../data-source";
+import { EmailExtraction } from "../entity/EmailExtraction";
 const FormData = require("form-data");
 
 export class EmailExtractionController {
@@ -17,52 +17,47 @@ export class EmailExtractionController {
       .readdirSync(directoryPath)
       .filter((file) => !file.startsWith("."));
 
-    // Add files, ext_ids and ext_file_names to the form data
-    files.forEach((file) => {
-      formData.append(
-        "files",
-        fs.createReadStream(path.join(directoryPath, file)),
-        file
-      );
-    });
-    const extIds = files.map((file) => file.replace(".txt", ""));
-    const extFileNames = files;
+    if (files.length > 0) {
+      formData.append("proj_name", "enron_email_extraction_20_june_multi_file");
 
-    extIds.forEach((extId) => {
-      formData.append("ext_ids", extId);
-    });
+      // Add files, ext_ids and ext_file_names to the form data
+      files.forEach((file) => {
+        formData.append(
+          "files",
+          fs.createReadStream(path.join(directoryPath, file))
+        );
+      });
+      const extIds = files.map((file) => file.replace(".txt", ""));
+      const extFileNames = files;
 
-    extFileNames.forEach((extFileName) => {
-      formData.append("ext_file_names", extFileName);
-    });
+      extIds.forEach((extId) => {
+        formData.append("ext_ids", extId);
+      });
 
-    // formData.append("auth_key", process.env.TRELLIS_API_KEY);
-    formData.append("file_types", "txt");
-    formData.append("proj_name", "enron_email_extraction");
-    // callback todo
+      extFileNames.forEach((extFileName) => {
+        formData.append("ext_file_names", extFileName);
+      });
 
-    // console.log("formData 123", JSON.stringify(formData));y
-    console.log("files 123", JSON.stringify(files));
-    console.log("extIds 123", JSON.stringify(extIds));
-    console.log("extFileNames 123", JSON.stringify(extFileNames));
+      try {
+        const res = await axios.post(
+          "https://api.usetrellis.co/v1/assets/upload/",
+          formData,
+          {
+            headers: {
+              ...formData.getHeaders(),
+              Accept: "application/json",
+              Authorization: process.env.TRELLIS_API_KEY,
+            },
+          }
+        );
 
-    try {
-      const res = await axios.post(
-        "https://api.usetrellis.co/v1/assets/upload/",
-        formData,
-        {
-          headers: {
-            ...formData.getHeaders(),
-            Accept: "application/json",
-            Authorization: process.env.TRELLIS_API_KEY,
-          },
-        }
-      );
-
-      response.json(res.data);
-    } catch (error) {
-      console.error("Failed to upload email assets:", error);
-      response.status(500).send("Failed to upload email assets");
+        response.json(res.data);
+      } catch (error) {
+        console.error("Failed to upload email assets:", error);
+        response.status(500).send("Failed to upload email assets");
+      }
+    } else {
+      response.status(400).send("No files found in the directory.");
     }
   }
 
