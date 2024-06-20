@@ -49,7 +49,7 @@ export class EmailExtractionController {
             },
           }
         );
-        const batchAssetIds = Object.keys(res.data.data); // Extract asset IDs from response
+        const batchAssetIds = Object.keys(res.data.data);
         allAssetIds.push(...batchAssetIds); // Collect all asset IDs
         console.log(`Batch ${i / batchSize + 1}: Upload successful`);
       } catch (error) {
