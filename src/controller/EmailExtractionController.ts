@@ -61,8 +61,7 @@ export class EmailExtractionController {
       }
     }
 
-    // Save all asset IDs in shared state with a unique key
-    const requestId = Date.now().toString(); // Use current timestamp as a unique key
+    const requestId = Date.now().toString();
     assetIdMap.set(requestId, allAssetIds);
     response.send({ message: "All batches uploaded successfully.", requestId });
   }
