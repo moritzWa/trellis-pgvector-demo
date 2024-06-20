@@ -1,3 +1,4 @@
+import { AssetStatusController } from "./controller/AssetStatusController";
 import { EmailExtractionController } from "./controller/EmailExtractionController";
 import { UserController } from "./controller/UserController";
 
@@ -44,5 +45,11 @@ export const Routes = [
     route: "/upload-emails",
     controller: EmailExtractionController,
     action: "uploadEmailAssets",
+  },
+  {
+    method: "post",
+    route: "/check-upload-status",
+    controller: AssetStatusController,
+    action: "checkUploadStatus",
   },
 ];

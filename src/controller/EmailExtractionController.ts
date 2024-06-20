@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
+import { assetIdMap } from "../state";
 const FormData = require("form-data");
 
 export class EmailExtractionController {
@@ -12,12 +13,12 @@ export class EmailExtractionController {
 
   async uploadEmailAssets(request: Request, response: Response) {
     const batchSize = 2;
-    const projectName = "file_batches";
-
+    const projectName = "file_batches_4";
     const directoryPath = path.join(__dirname, "..", "assets");
     const allFiles = fs
       .readdirSync(directoryPath)
       .filter((file) => !file.startsWith("."));
+    let allAssetIds = []; // Array to store all asset IDs from all batches
 
     for (let i = 0; i < allFiles.length; i += batchSize) {
       const batchFiles = allFiles.slice(i, i + batchSize);
@@ -48,16 +49,22 @@ export class EmailExtractionController {
             },
           }
         );
+        const batchAssetIds = Object.keys(res.data.data); // Extract asset IDs from response
+        allAssetIds.push(...batchAssetIds); // Collect all asset IDs
         console.log(`Batch ${i / batchSize + 1}: Upload successful`);
       } catch (error) {
         console.error(`Failed to upload batch ${i / batchSize + 1}:`, error);
         response
           .status(500)
           .send(`Failed to upload batch ${i / batchSize + 1}`);
+        return;
       }
     }
 
-    response.send("All batches uploaded successfully.");
+    // Save all asset IDs in shared state with a unique key
+    const requestId = Date.now().toString(); // Use current timestamp as a unique key
+    assetIdMap.set(requestId, allAssetIds);
+    response.send({ message: "All batches uploaded successfully.", requestId });
   }
 
   async save(request: Request, response: Response, next: NextFunction) {
