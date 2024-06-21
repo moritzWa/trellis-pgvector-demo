@@ -5,40 +5,35 @@ export const transformationParams = {
     {
       column_name: "email_from",
       column_type: "text",
-      output_values: null,
       transform_type: "extraction",
       task_description: "extract who sent the email. This should be in From",
     },
     {
       column_name: "email_to",
       column_type: "text[]",
-      output_values: null,
       transform_type: "extraction",
       task_description: "Extract a list of emails in the To section",
     },
     {
       column_name: "people_mentioned",
       column_type: "text[]",
-      output_values: null,
       transform_type: "extraction",
-      task_description:
-        "Extract a list of people mentioned in the email. Return empty list if no one is being mentioned.",
+      task_description: "Extract a list of people mentioned in the email.",
     },
     {
       column_name: "compliance_risk",
       column_type: "text",
       output_values: {
-        No: "the email does not potential compliance violation ",
-        Yes: "the email contains potential compliance violation ",
+        No: "the email does not potential compliance violation",
+        Yes: "the email contains potential compliance violation",
       },
       transform_type: "classification",
       task_description:
-        "Classify whether the email contains information that's potential compliance violation",
+        "Classify whether the email contains information that's a potential compliance violation",
     },
     {
       column_name: "one_line_summary",
       column_type: "text",
-      output_values: null,
       transform_type: "generation",
       task_description: "Summarize the email in one line",
     },
@@ -71,7 +66,7 @@ export const transformationParams = {
           "Topics around regulations and regulators (includes price caps)",
         company_image: "Topics around company image",
         energy_crisis:
-          "Topics related to california energy crisis / california politics ",
+          "Topics related to california energy crisis / california politics",
         internal_project:
           "Topics around internal projects -- progress and strategy",
         internal_operations: "Topics around Internal operations",
@@ -83,21 +78,20 @@ export const transformationParams = {
       column_name: "emotional_tone",
       column_type: "text",
       output_values: {
-        anger: "The email has angry, aggresive or agitate tone. ",
+        anger: "The email has angry, aggressive or agitate tone.",
         humor: "The email is funny or has humorous tone",
         secret:
-          "The email has secrecy / confidentiality tone or contains confidential information. ",
+          "The email has secrecy / confidentiality tone or contains confidential information.",
         concern: "The email seems concern, worry or anxious",
         neutral: "The email is neutral",
         gratitude: "The email has gratitude or admiration tone",
       },
       transform_type: "classification",
-      task_description: "Classify the tone and intent of the message. ",
+      task_description: "Classify the tone and intent of the message.",
     },
     {
       column_name: "date",
       column_type: "text",
-      output_values: null,
       transform_type: "extraction",
       task_description: "Extract the date of the email in MM/DD/YYYY format",
     },
