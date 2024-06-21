@@ -1,5 +1,6 @@
 import { AssetStatusController } from "./controller/AssetStatusController";
 import { EmailExtractionController } from "./controller/EmailExtractionController";
+import { TransformationStatusController } from "./controller/TransformationStatusController";
 import { UserController } from "./controller/UserController";
 
 export const Routes = [
@@ -57,5 +58,11 @@ export const Routes = [
     route: "/check-upload-status",
     controller: AssetStatusController,
     action: "checkUploadStatus",
+  },
+  {
+    method: "post",
+    route: "/check-transformation-status",
+    controller: TransformationStatusController,
+    action: "checkTransformationStatus",
   },
 ];
