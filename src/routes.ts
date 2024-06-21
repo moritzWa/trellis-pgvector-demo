@@ -48,6 +48,12 @@ export const Routes = [
   },
   {
     method: "post",
+    route: "/transform-emails",
+    controller: EmailExtractionController,
+    action: "initiateTransformation",
+  },
+  {
+    method: "post",
     route: "/check-upload-status",
     controller: AssetStatusController,
     action: "checkUploadStatus",

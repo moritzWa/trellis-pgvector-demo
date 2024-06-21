@@ -14,7 +14,7 @@ export class EmailExtractionController {
   private emailExtractionRepository =
     AppDataSource.getRepository(EmailExtraction);
 
-  // upload and tranform data
+  // upload
 
   async uploadEmailAssets(request: Request, response: Response) {
     const batchSize = 2;
@@ -38,6 +38,8 @@ export class EmailExtractionController {
         formData.append("ext_file_names", file);
         formData.append("file_types", "txt");
       });
+
+      console.log("proj_name", this.projectName);
 
       formData.append("proj_name", this.projectName);
 
@@ -69,6 +71,8 @@ export class EmailExtractionController {
     assetIdMap.set(requestId, allAssetIds);
     response.send({ message: "All batches uploaded successfully.", requestId });
   }
+
+  // tranform
 
   async initiateTransformation(request: Request, response: Response) {
     const headers = {
