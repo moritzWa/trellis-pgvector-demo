@@ -5,20 +5,24 @@ import * as path from "path";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
 import { assetIdMap } from "../state";
+import { transformationParams } from "../tranformations/EmailTranformation";
 const FormData = require("form-data");
 
 export class EmailExtractionController {
+  private projectName = "file_batches_4";
+
   private emailExtractionRepository =
     AppDataSource.getRepository(EmailExtraction);
 
+  // upload and tranform data
+
   async uploadEmailAssets(request: Request, response: Response) {
     const batchSize = 2;
-    const projectName = "file_batches_4";
     const directoryPath = path.join(__dirname, "..", "assets");
     const allFiles = fs
       .readdirSync(directoryPath)
       .filter((file) => !file.startsWith("."));
-    let allAssetIds = []; // Array to store all asset IDs from all batches
+    let allAssetIds = [];
 
     for (let i = 0; i < allFiles.length; i += batchSize) {
       const batchFiles = allFiles.slice(i, i + batchSize);
@@ -35,7 +39,7 @@ export class EmailExtractionController {
         formData.append("file_types", "txt");
       });
 
-      formData.append("proj_name", projectName);
+      formData.append("proj_name", this.projectName);
 
       try {
         const res = await axios.post(
@@ -65,6 +69,35 @@ export class EmailExtractionController {
     assetIdMap.set(requestId, allAssetIds);
     response.send({ message: "All batches uploaded successfully.", requestId });
   }
+
+  async initiateTransformation(request: Request, response: Response) {
+    const headers = {
+      Authorization: process.env.TRELLIS_API_KEY,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    };
+
+    try {
+      const initiateResponse = await axios.post(
+        "https://api.usetrellis.co/v1/transform/initiate",
+        {
+          proj_name: this.projectName,
+          transform_params: transformationParams,
+        },
+        { headers }
+      );
+
+      response.json({
+        message: "Transformation initiated",
+        data: initiateResponse.data,
+      });
+    } catch (error) {
+      console.error("Error initiating transformation:", error);
+      response.status(500).send("Failed to initiate transformation");
+    }
+  }
+
+  // get and save emails to db
 
   async save(request: Request, response: Response, next: NextFunction) {
     const emailExtraction = this.emailExtractionRepository.create(request.body);
