@@ -50,7 +50,7 @@ export class EmailExtractionController {
           }
         );
         const batchAssetIds = Object.keys(res.data.data);
-        allAssetIds.push(...batchAssetIds); // Collect all asset IDs
+        allAssetIds.push(...batchAssetIds);
         console.log(`Batch ${i / batchSize + 1}: Upload successful`);
       } catch (error) {
         console.error(`Failed to upload batch ${i / batchSize + 1}:`, error);
