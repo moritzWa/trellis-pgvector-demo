@@ -39,8 +39,6 @@ export class EmailExtractionController {
         formData.append("file_types", "txt");
       });
 
-      console.log("proj_name", this.projectName);
-
       formData.append("proj_name", this.projectName);
 
       try {

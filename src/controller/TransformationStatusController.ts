@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Request, Response } from "express";
+import { statusMap } from "../state";
 
 interface TransformationStatus {
   status: string;
@@ -8,11 +9,8 @@ interface TransformationStatus {
 
 export class TransformationStatusController {
   async checkTransformationStatus(request: Request, response: Response) {
-    // const transformId = Array.from(statusMap.keys())[0];
-
-    console.log("running checkTransformationStatus");
-
-    const transformId = "transform_2iAyaSagZEYJYi2HOVlo0qBLCeB";
+    const transformId = Array.from(statusMap.keys())[0];
+    // const transformId = "transform_2iAyaSagZEYJYi2HOVlo0qBLCeB";
 
     if (!transformId) {
       response.status(400).send("No transformation ID available in state.");
@@ -49,7 +47,7 @@ export class TransformationStatusController {
             await new Promise((resolve) => setTimeout(resolve, 2000));
             continue;
           }
-          throw error; // Rethrow the error if it's not a timeout or if retry attempts are exhausted
+          throw error;
         }
       }
     } catch (error) {
