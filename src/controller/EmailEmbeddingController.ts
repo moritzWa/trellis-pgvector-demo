@@ -4,6 +4,13 @@ import * as path from "path";
 import * as pgvector from "pgvector";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
+// import { Configuration, OpenAIApi } from "openai";
+
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export class EmailEmbeddingController {
   async embedEmails(request: Request, response: Response) {
@@ -20,15 +27,26 @@ export class EmailEmbeddingController {
       const filePath = path.join(directoryPath, file);
       const fileContent = fs.readFileSync(filePath, "utf-8");
 
-      // Here, you would typically use an embedding model to create the vector
-      // For this example, we'll use a dummy vector
-      const dummyVector = [0.1, 0.2, 0.3]; // Replace this with actual embedding
+      let vector;
+
+      try {
+        const embedding = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: fileContent,
+          encoding_format: "float",
+        });
+
+        vector = embedding.data[0].embedding;
+      } catch (error) {
+        console.error("Failed to generate embedding:", error);
+        throw new Error("Failed to generate embedding");
+      }
 
       const emailExtraction = emailExtractionRepository.create({
         ext_file_id: extId,
         ext_file_name: file,
         full_email: fileContent,
-        embedding: pgvector.toSql(dummyVector),
+        embedding: pgvector.toSql(vector),
       });
 
       await emailExtractionRepository.save(emailExtraction);

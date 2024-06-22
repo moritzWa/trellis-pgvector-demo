@@ -15,6 +15,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.17.2",
     "form-data": "^4.0.0",
+    "openai": "^4.52.0",
     "pg": "^8.4.0",
     "pgvector": "^0.1.8",
     "reflect-metadata": "^0.1.13",
