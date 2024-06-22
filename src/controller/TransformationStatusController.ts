@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Request, Response } from "express";
-import { statusMap } from "../state";
+import { transformationStatusMap } from "../state";
 
 interface TransformationStatus {
   status: string;
@@ -9,7 +9,7 @@ interface TransformationStatus {
 
 export class TransformationStatusController {
   async checkTransformationStatus(request: Request, response: Response) {
-    const transformId = Array.from(statusMap.keys())[0];
+    const transformId = Array.from(transformationStatusMap.keys())[0];
     // const transformId = "transform_2iAyaSagZEYJYi2HOVlo0qBLCeB";
 
     if (!transformId) {
@@ -35,6 +35,8 @@ export class TransformationStatusController {
           const transformationStatus = Object.values(
             statusResponse.data.data
           )[0] as TransformationStatus;
+
+          transformationStatusMap.set(transformId, transformationStatus);
           if (["completed", "failed"].includes(transformationStatus.status)) {
             response.send(transformationStatus);
             break;

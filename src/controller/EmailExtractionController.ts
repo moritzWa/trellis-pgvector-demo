@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
-import { assetIdMap } from "../state";
+import { assetIdMap, transformationStatusMap } from "../state";
 import { transformationParams } from "../tranformations/EmailTranformation";
 const FormData = require("form-data");
 
@@ -88,6 +88,9 @@ export class EmailExtractionController {
         },
         { headers }
       );
+
+      const transformId = initiateResponse.data.data.transform_id;
+      transformationStatusMap.set(transformId, { status: "initiated" });
 
       response.json({
         message: "Transformation initiated",
