@@ -1,4 +1,5 @@
 import { AssetStatusController } from "./controller/AssetStatusController";
+import { EmailEmbeddingController } from "./controller/EmailEmbeddingController";
 import { EmailExtractionController } from "./controller/EmailExtractionController";
 import { TransformationStatusController } from "./controller/TransformationStatusController";
 import { UserController } from "./controller/UserController";
@@ -65,6 +66,14 @@ export const Routes = [
     controller: EmailExtractionController,
     action: "fetchAndSaveTransformationResults",
   },
+  // embedding
+  {
+    method: "post",
+    route: "/embed-emails",
+    controller: EmailEmbeddingController,
+    action: "embedEmails",
+  },
+
   // transformation status
   {
     method: "post",

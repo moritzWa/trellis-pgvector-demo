@@ -7,46 +7,49 @@ export class EmailExtraction {
   id: number;
 
   @Column()
-  ext_file_id: string; // ex. 3076
+  ext_file_id: string; // ex. 3076 (from 3076.txt)
 
   // won't receive this from trellis
   @Column("text", { nullable: true })
   full_email: string;
 
+  @Column("text")
+  embedding: string; // vector type not supported: https://github.com/typeorm/typeorm/issues/10056
+
   @Column()
   ext_file_name: string;
 
   // Trellis extraction
-  @Column()
+  @Column({ nullable: true })
   asset_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   result_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   email_from: string;
 
-  @Column("text", { array: true })
+  @Column("text", { array: true, nullable: true })
   email_to: string[];
 
-  @Column("text", { array: true })
+  @Column("text", { array: true, nullable: true })
   people_mentioned: string[];
 
-  @Column()
+  @Column({ nullable: true })
   compliance_risk: boolean;
 
-  @Column("text")
+  @Column("text", { nullable: true })
   one_line_summary: string;
 
-  @Column()
+  @Column({ nullable: true })
   genre: string;
 
-  @Column()
+  @Column({ nullable: true })
   primary_topics: string;
 
-  @Column()
+  @Column({ nullable: true })
   emotional_tone: string;
 
-  @Column()
+  @Column({ nullable: true })
   date: string;
 }

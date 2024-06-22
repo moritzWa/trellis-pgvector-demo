@@ -168,6 +168,9 @@ export class EmailExtractionController {
         asset_id: email.asset_id,
         ext_file_id: email.ext_file_id,
         ext_file_name: email.ext_file_name,
+        embedding: email.embedding,
+
+        // extraction data
         email_from: email.email_from,
         result_id: email.result_id,
         full_email: email.full_email,

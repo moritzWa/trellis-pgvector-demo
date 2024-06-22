@@ -1,14 +1,12 @@
 import { Request, Response } from "express";
 import * as fs from "fs";
 import * as path from "path";
-import pgvector from "pgvector";
+import * as pgvector from "pgvector";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
 
 export class EmailEmbeddingController {
-  // ... existing methods ...
-
-  async processAndStoreEmails(request: Request, response: Response) {
+  async embedEmails(request: Request, response: Response) {
     const directoryPath = path.join(__dirname, "..", "assets");
     const files = fs
       .readdirSync(directoryPath)
