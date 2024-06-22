@@ -11,17 +11,24 @@ export class EmailExtraction {
   @Column()
   result_id: string;
 
-  @Column("text")
+  @Column()
+  ext_file_id: string;
+
+  @Column()
+  ext_file_name: string;
+
+  // won't receive this from trellis
+  @Column("text", { nullable: true })
   full_email: string;
 
   @Column()
   email_from: string;
 
-  @Column()
-  email_to: string;
+  @Column("text", { array: true })
+  email_to: string[];
 
-  @Column("text")
-  people_mentioned: string;
+  @Column("text", { array: true })
+  people_mentioned: string[];
 
   @Column()
   compliance_risk: boolean;

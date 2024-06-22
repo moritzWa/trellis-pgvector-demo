@@ -5,7 +5,10 @@ import * as path from "path";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
 import { assetIdMap, transformationStatusMap } from "../state";
-import { transformationParams } from "../tranformations/EmailTranformation";
+import {
+  EmailTransformationResult,
+  transformationParams,
+} from "../tranformations/EmailTranformation";
 const FormData = require("form-data");
 
 export class EmailExtractionController {
@@ -102,9 +105,54 @@ export class EmailExtractionController {
     }
   }
 
+  async fetchAndSaveTransformationResults(
+    request: Request,
+    response: Response
+  ) {
+    const transformId = transformationStatusMap.keys().next().value; // Get the first transformation ID from the state
+
+    if (!transformId) {
+      response.status(400).send("No transformation ID available.");
+      return;
+    }
+
+    const transformResultsUrl = `https://api.usetrellis.co/v1/transform/${transformId}/results`;
+    const headers = {
+      Accept: "application/json",
+      Authorization: process.env.TRELLIS_API_KEY,
+    };
+
+    try {
+      const resultsResponse = await axios.get(transformResultsUrl, { headers });
+      const results: EmailTransformationResult[] = resultsResponse.data.data;
+
+      // Log the results
+      console.log("Transformation Results:", results);
+
+      Object.keys(results).forEach(async (key) => {
+        const result = results[key];
+        const emailExtraction = this.emailExtractionRepository.create({
+          ...result,
+          asset_id: key,
+          // compliance_risk: result.compliance_risk === "Yes",
+        });
+        await this.emailExtractionRepository.save(emailExtraction);
+      });
+
+      response.send({
+        message: "Transformation results fetched and saved successfully.",
+      });
+    } catch (error) {
+      console.error("Failed to fetch transformation results:", error);
+      response.status(500).send("Failed to fetch transformation results");
+    }
+  }
+
   // get and save emails to db
 
   async save(request: Request, response: Response, next: NextFunction) {
+    console.log("request.body in save", request.body);
+
     const emailExtraction = this.emailExtractionRepository.create(request.body);
     await this.emailExtractionRepository.save(emailExtraction);
     return response.send(emailExtraction);
@@ -118,6 +166,8 @@ export class EmailExtractionController {
       const cleanEmails = allEmails.map((email) => ({
         id: email.id,
         asset_id: email.asset_id,
+        ext_file_id: email.ext_file_id,
+        ext_file_name: email.ext_file_name,
         email_from: email.email_from,
         result_id: email.result_id,
         full_email: email.full_email,

@@ -61,6 +61,13 @@ export const Routes = [
   },
   {
     method: "post",
+    route: "/fetch-transformation-results",
+    controller: EmailExtractionController,
+    action: "fetchAndSaveTransformationResults",
+  },
+  // transformation status
+  {
+    method: "post",
     route: "/check-transformation-status",
     controller: TransformationStatusController,
     action: "checkTransformationStatus",

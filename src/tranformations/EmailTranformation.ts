@@ -1,3 +1,56 @@
+// asset_2iAyXtyu5AKEXLefFeTIxt2kCN6: {
+//   result_id: 'result_2iAyb5uSgyFcAvc45J57iFk0Wem',
+//   ext_file_id: '3077',
+//   ext_file_name: '3077.txt',
+//   email_from: 'matthew.lenhart@enron.com',
+//   email_to: [ 'phillip.allen@enron.com' ],
+//   people_mentioned: [
+//     'Matthew Lenhart',
+//     'Phillip Allen',
+//     'Ben Jacoby',
+//     'Shelby Malkemes'
+//   ],
+//   compliance_risk: 'No',
+//   one_line_summary: "Ben Jacoby requests a meeting to discuss the year-end PRC process and Matthew Lenhart's activities.",
+//   genre: 'company_business',
+//   primary_topics: 'internal_operations',
+//   emotional_tone: 'neutral',
+//   date: '10/12/2000'
+// }
+
+export interface EmailTransformationResult {
+  email_from: string;
+  email_to: string[];
+  people_mentioned: string[];
+  compliance_risk: "Yes" | "No";
+  one_line_summary: string;
+  genre:
+    | "employment"
+    | "empty_message"
+    | "document_review"
+    | "purely_personal"
+    | "company_business"
+    | "logistics_arrangement"
+    | "personal_professional";
+  primary_topics:
+    | "legal"
+    | "other"
+    | "political"
+    | "regulation"
+    | "company_image"
+    | "energy_crisis"
+    | "internal_project"
+    | "internal_operations";
+  emotional_tone:
+    | "anger"
+    | "humor"
+    | "secret"
+    | "concern"
+    | "neutral"
+    | "gratitude";
+  date: string;
+}
+
 export const transformationParams = {
   mode: "document",
   model: "trellis-premium",
