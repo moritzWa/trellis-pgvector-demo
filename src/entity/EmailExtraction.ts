@@ -2,24 +2,26 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class EmailExtraction {
-  @PrimaryGeneratedColumn()
+  // initial vectorization
+  @PrimaryGeneratedColumn() // auto generated & incremented
   id: number;
 
+  @Column()
+  ext_file_id: string; // ex. 3076
+
+  // won't receive this from trellis
+  @Column("text", { nullable: true })
+  full_email: string;
+
+  @Column()
+  ext_file_name: string;
+
+  // Trellis extraction
   @Column()
   asset_id: string;
 
   @Column()
   result_id: string;
-
-  @Column()
-  ext_file_id: string;
-
-  @Column()
-  ext_file_name: string;
-
-  // won't receive this from trellis
-  @Column("text", { nullable: true })
-  full_email: string;
 
   @Column()
   email_from: string;

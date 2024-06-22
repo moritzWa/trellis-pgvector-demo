@@ -1,15 +1,22 @@
 import * as bodyParser from "body-parser";
+import * as dotenv from "dotenv";
 import * as express from "express";
 import { AppDataSource } from "./data-source";
 import { Routes } from "./routes";
-import * as dotenv from "dotenv";
 
 dotenv.config();
 
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     const app = express();
     app.use(bodyParser.json());
+
+    try {
+      await AppDataSource.query("CREATE EXTENSION IF NOT EXISTS vector");
+      console.log("PG Vector extension enabled successfully.");
+    } catch (error) {
+      console.error("Error enabling PG Vector extension:", error);
+    }
 
     Routes.forEach((route) => {
       app[route.method](route.route, (req, res) => {
