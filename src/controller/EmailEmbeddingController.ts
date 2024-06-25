@@ -1,19 +1,17 @@
 import { Request, Response } from "express";
 import * as fs from "fs";
+import OpenAI from "openai";
 import * as path from "path";
 import * as pgvector from "pgvector";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
-// import { Configuration, OpenAIApi } from "openai";
-
-import OpenAI from "openai";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export class EmailEmbeddingController {
   async embedEmails(request: Request, response: Response) {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const directoryPath = path.join(__dirname, "..", "assets");
     const files = fs
       .readdirSync(directoryPath)
@@ -31,7 +29,8 @@ export class EmailEmbeddingController {
 
       try {
         const embedding = await openai.embeddings.create({
-          model: "text-embedding-3-small",
+          model: "text-embedding-3-large",
+          dimensions: 256,
           input: fileContent,
           encoding_format: "float",
         });
