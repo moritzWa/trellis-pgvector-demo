@@ -66,6 +66,12 @@ export const Routes = [
     controller: EmailExtractionController,
     action: "fetchAndSaveTransformationResults",
   },
+  {
+    method: "post",
+    route: "/search-emails",
+    controller: EmailExtractionController,
+    action: "searchEmails",
+  },
   // embedding
   {
     method: "post",

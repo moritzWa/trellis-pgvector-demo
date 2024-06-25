@@ -1,7 +1,9 @@
 import axios from "axios";
 import { NextFunction, Request, Response } from "express";
 import * as fs from "fs";
+import OpenAI from "openai";
 import * as path from "path";
+import * as pgvector from "pgvector";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
 import { assetIdMap, transformationStatusMap } from "../state";
@@ -154,6 +156,48 @@ export class EmailExtractionController {
     } catch (error) {
       console.error("Failed to fetch transformation results:", error);
       response.status(500).send("Failed to fetch transformation results");
+    }
+  }
+
+  async search(request: Request, response: Response) {
+    const { query, filters, limit = 10 } = request.body;
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    try {
+      const queryEmbedding = await openai.embeddings.create({
+        model: "text-embedding-3-large",
+        dimensions: 256,
+        input: query,
+        encoding_format: "float",
+      });
+
+      const vector = queryEmbedding.data[0].embedding;
+
+      // Create query builder
+      let queryBuilder = this.emailExtractionRepository
+        .createQueryBuilder("email")
+        .orderBy("email.embedding <-> :embedding")
+        .setParameter("embedding", pgvector.toSql(vector))
+        .limit(limit);
+
+      // Apply filters
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          queryBuilder = queryBuilder.andWhere(`email.${key} = :${key}`, {
+            [key]: value,
+          });
+        });
+      }
+
+      const results = await queryBuilder.getMany();
+
+      response.json(results);
+    } catch (error) {
+      console.error("Error searching emails:", error);
+      response.status(500).send("Error searching emails");
     }
   }
 
