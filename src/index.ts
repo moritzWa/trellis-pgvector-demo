@@ -11,11 +11,24 @@ AppDataSource.initialize()
     const app = express();
     app.use(bodyParser.json());
 
+    // Log database connection info
+    const dbInfo = await AppDataSource.query(
+      "SELECT version(), current_database()"
+    );
+    console.log("Connected to database:", dbInfo[0]);
+
     try {
-      await AppDataSource.query("CREATE EXTENSION IF NOT EXISTS vector");
-      console.log("PG Vector extension enabled successfully.");
+      // Check if pgvector is available
+      await AppDataSource.query("SELECT 'vector'::regtype");
+      console.log("pgvector is already installed");
     } catch (error) {
-      console.error("Error enabling PG Vector extension:", error);
+      console.log("pgvector is not installed");
+      try {
+        await AppDataSource.query("CREATE EXTENSION IF NOT EXISTS vector");
+        console.log("PG Vector extension enabled successfully.");
+      } catch (error) {
+        console.error("Error enabling PG Vector extension:", error);
+      }
     }
 
     Routes.forEach((route) => {

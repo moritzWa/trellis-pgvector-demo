@@ -1,8 +1,9 @@
 services:
   postgres:
-    image: postgres
+    container_name: pgvector_demo_trellis_DB
+    image: pgvector/pgvector:pg16
     environment:
-      postgres_USER: postgres
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
