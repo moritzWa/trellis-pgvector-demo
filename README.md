@@ -20,9 +20,9 @@ Note: This project is a work in progress. The logic to combine data from the Tre
 
 ## Setup
 
-### PostgreSQL with pgvector
+### PostgreSQL with [pgvector](https://github.com/pgvector/pgvector)
 
-1. Pull the pgvector PostgreSQL Docker image:
+1. Pull the [pgvector PostgreSQL Docker image](https://hub.docker.com/r/pgvector/pgvector):
 
    ```
    docker pull pgvector/pgvector:pg16
