@@ -19,10 +19,13 @@
 // }
 
 export interface EmailTransformationResult {
+  result_id: string;
+  ext_file_id: string;
+  ext_file_name: string;
   email_from: string;
   email_to: string[];
   people_mentioned: string[];
-  compliance_risk: "Yes" | "No";
+  compliance_risk: string; // "Yes" | "No"
   one_line_summary: string;
   genre:
     | "employment"

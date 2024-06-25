@@ -124,20 +124,29 @@ export class EmailExtractionController {
 
     try {
       const resultsResponse = await axios.get(transformResultsUrl, { headers });
-      const results: EmailTransformationResult[] = resultsResponse.data.data;
+      const results: Record<string, EmailTransformationResult> =
+        resultsResponse.data.data;
 
       // Log the results
       console.log("Transformation Results:", results);
 
-      Object.keys(results).forEach(async (key) => {
-        const result = results[key];
-        const emailExtraction = this.emailExtractionRepository.create({
-          ...result,
-          asset_id: key,
-          // compliance_risk: result.compliance_risk === "Yes",
+      for (const [assetId, result] of Object.entries(results)) {
+        const existingEmail = await this.emailExtractionRepository.findOne({
+          where: { ext_file_id: result.ext_file_id },
         });
-        await this.emailExtractionRepository.save(emailExtraction);
-      });
+
+        if (existingEmail) {
+          await this.emailExtractionRepository.update(existingEmail.id, {
+            ...result,
+            asset_id: assetId,
+            compliance_risk: result.compliance_risk === "Yes",
+          });
+        } else {
+          console.warn(
+            `No existing record found for ext_file_id: ${result.ext_file_id}`
+          );
+        }
+      }
 
       response.send({
         message: "Transformation results fetched and saved successfully.",
