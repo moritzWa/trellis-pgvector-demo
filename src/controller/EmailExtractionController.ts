@@ -7,7 +7,6 @@ import * as pgvector from "pgvector";
 import { QueryFailedError } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { EmailExtraction } from "../entity/EmailExtraction";
-import { assetIdMap, transformationStatusMap } from "../state";
 import {
   EmailTransformationResult,
   transformationParams,
@@ -15,7 +14,7 @@ import {
 const FormData = require("form-data");
 
 export class EmailExtractionController {
-  private projectName = "file_batches_4";
+  private projectName = "test_50_files";
 
   private emailExtractionRepository =
     AppDataSource.getRepository(EmailExtraction);
@@ -72,7 +71,6 @@ export class EmailExtractionController {
     }
 
     const requestId = Date.now().toString();
-    assetIdMap.set(requestId, allAssetIds);
     response.send({ message: "All batches uploaded successfully.", requestId });
   }
 
@@ -95,13 +93,7 @@ export class EmailExtractionController {
         { headers }
       );
 
-      const transformId = initiateResponse.data.data.transform_id;
-      transformationStatusMap.set(transformId, { status: "initiated" });
-
-      response.json({
-        message: "Transformation initiated",
-        data: initiateResponse.data,
-      });
+      response.json(initiateResponse.data);
     } catch (error) {
       console.error("Error initiating transformation:", error);
       response.status(500).send("Failed to initiate transformation");
@@ -112,7 +104,7 @@ export class EmailExtractionController {
     request: Request,
     response: Response
   ) {
-    const transformId = transformationStatusMap.keys().next().value; // Get the first transformation ID from the state
+    const transformId = request.query.transformationId as string;
 
     if (!transformId) {
       response.status(400).send("No transformation ID available.");
@@ -140,18 +132,42 @@ export class EmailExtractionController {
           });
 
           if (existingEmail) {
-            await this.emailExtractionRepository.update(existingEmail.id, {
-              ...result,
+            // Prepare the update data, only including new fields from the API
+            const updateData = {
               asset_id: assetId,
+              result_id: result.result_id,
+              email_from: result.email_from,
+              email_to: result.email_to,
+              people_mentioned: result.people_mentioned,
               compliance_risk: result.compliance_risk === "Yes",
+              one_line_summary: result.one_line_summary,
+              genre: result.genre,
+              primary_topics: result.primary_topics,
+              emotional_tone: result.emotional_tone,
+              date: result.date,
+            };
+
+            console.log("Before update:", existingEmail);
+            console.log("Update data:", updateData);
+
+            // Update the existing record
+            const updateResult = await this.emailExtractionRepository.update(
+              existingEmail.id,
+              updateData
+            );
+
+            console.log("After update:", updateResult);
+
+            // Fetch the updated record to confirm changes
+            const updatedEmail = await this.emailExtractionRepository.findOne({
+              where: { id: existingEmail.id },
             });
+            console.log("Updated email:", updatedEmail);
           } else {
-            // Create a new record if it doesn't exist
-            await this.emailExtractionRepository.save({
-              ...result,
-              asset_id: assetId,
-              compliance_risk: result.compliance_risk === "Yes",
-            });
+            console.log(
+              "No existing email found for ext_file_id:",
+              result.ext_file_id
+            );
           }
         }
       }
@@ -283,7 +299,7 @@ export class EmailExtractionController {
         EmailExtraction
       ).find();
 
-      console.log("allEmails", allEmails);
+      // console.log("allEmails", allEmails);
 
       const cleanEmails = allEmails.map((email) => ({
         id: email.id,

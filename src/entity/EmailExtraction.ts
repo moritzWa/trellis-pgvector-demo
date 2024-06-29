@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class EmailExtraction {
@@ -7,6 +7,7 @@ export class EmailExtraction {
   id: number;
 
   @Column()
+  @Index({ unique: true }) // Add this line to create a unique index
   ext_file_id: string; // ex. 3076 (from 3076.txt)
 
   // won't receive this from trellis

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Request, Response } from "express";
-import { assetIdMap } from "../state";
 
 interface AssetStatus {
   status: string;
@@ -8,9 +7,8 @@ interface AssetStatus {
 
 export class AssetStatusController {
   async checkUploadStatus(request: Request, response: Response) {
-    console.log("assetIdMap", assetIdMap);
+    const assetIds = request.query.assetIds as string[];
 
-    const assetIds = Array.from(assetIdMap.keys());
     const asset_status_url = "https://api.usetrellis.co/v1/assets/status/";
     const headers = {
       Authorization: process.env.TRELLIS_API_KEY,

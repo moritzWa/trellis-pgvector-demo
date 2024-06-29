@@ -20,6 +20,8 @@ export class EmailEmbeddingController {
     const emailExtractionRepository =
       AppDataSource.getRepository(EmailExtraction);
 
+    const emailExtractions: EmailExtraction[] = [];
+
     for (const file of files) {
       const extId = file.replace(".txt", "");
       const filePath = path.join(directoryPath, file);
@@ -38,18 +40,21 @@ export class EmailEmbeddingController {
         vector = embedding.data[0].embedding;
       } catch (error) {
         console.error("Failed to generate embedding:", error);
-        throw new Error("Failed to generate embedding");
+        continue; // Skip this file and continue with the next one
       }
 
-      const emailExtraction = emailExtractionRepository.create({
-        ext_file_id: extId,
-        ext_file_name: file,
-        full_email: fileContent,
-        embedding: pgvector.toSql(vector),
-      });
-
-      await emailExtractionRepository.save(emailExtraction);
+      emailExtractions.push(
+        emailExtractionRepository.create({
+          ext_file_id: extId,
+          ext_file_name: file,
+          full_email: fileContent,
+          embedding: pgvector.toSql(vector),
+        })
+      );
     }
+
+    // Perform bulk upsert
+    await emailExtractionRepository.upsert(emailExtractions, ["ext_file_id"]);
 
     response.send({ message: "Emails processed and stored successfully." });
   }
