@@ -70,8 +70,27 @@ export const Routes = [
     method: "post",
     route: "/search-emails",
     controller: EmailExtractionController,
-    action: "searchEmails",
+    action: "search",
   },
+  {
+    method: "post",
+    route: "/seeder",
+    controller: EmailExtractionController,
+    action: "seed",
+  },
+  {
+    method: "get",
+    route: "/check-embedding-type",
+    controller: EmailExtractionController,
+    action: "checkEmbeddingColumnType",
+  },
+  {
+    method: "post",
+    route: "/alter-embedding-type",
+    controller: EmailExtractionController,
+    action: "alterEmbeddingColumnType",
+  },
+
   // embedding
   {
     method: "post",

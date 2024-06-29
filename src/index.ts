@@ -31,6 +31,15 @@ AppDataSource.initialize()
       }
     }
 
+    // Run migrations
+    try {
+      await AppDataSource.runMigrations();
+      console.log("Migrations have been run successfully!");
+    } catch (error) {
+      console.error("Error running migrations:", error);
+      process.exit(1); // Exit the process if migrations fail
+    }
+
     Routes.forEach((route) => {
       app[route.method](route.route, (req, res) => {
         const controller = new (route.controller as any)();
