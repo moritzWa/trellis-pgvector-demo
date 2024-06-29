@@ -190,6 +190,10 @@ export class EmailExtractionController {
       apiKey: process.env.OPENAI_API_KEY,
     });
 
+    console.log("query", query);
+    console.log("filters", filters);
+    console.log("limit", limit);
+
     try {
       const queryEmbedding = await openai.embeddings.create({
         model: "text-embedding-3-large",
@@ -229,7 +233,14 @@ export class EmailExtractionController {
         vector_search_performed: result.similarity_score !== null,
       }));
 
-      console.log("Vector search results:", formattedResults);
+      const mappedResults = formattedResults.map(
+        ({ one_line_summary, similarity_score, email_content }) => ({
+          one_line_summary,
+          similarity_score,
+          email_content,
+        })
+      );
+      console.log("Vector search results:", mappedResults);
 
       response.json({
         message: "Search completed successfully",

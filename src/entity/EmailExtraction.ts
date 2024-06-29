@@ -12,7 +12,7 @@ export class EmailExtraction {
 
   // won't receive this from trellis
   @Column("text", { nullable: true })
-  full_email: string;
+  email_content: string;
 
   @Column("text")
   embedding: string; // actually VECTOR(256). vector type not supported: https://github.com/typeorm/typeorm/issues/10056

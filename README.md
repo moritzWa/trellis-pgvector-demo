@@ -121,10 +121,10 @@ Run `npm run start` to start the server
      curl http://localhost:3000/search-emails \
      -H "Content-Type: application/json" \
      -d '{
-       "query": "about state authorities restricting project",
+       "query": "HOW ABOUT SOME ICE CREAM?????",
        "filters": {
-         "emotional_tone": "neutral",
-         "compliance_risk": true
+         "emotional_tone": "gratitude",
+         "compliance_risk": false
        },
        "limit": 3
      }'

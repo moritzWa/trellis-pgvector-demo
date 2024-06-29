@@ -36,7 +36,7 @@ export class CreateEmailExtractionTable1719502784945
         CREATE TABLE IF NOT EXISTS email_extraction (
           id SERIAL PRIMARY KEY,
           ext_file_id TEXT UNIQUE,
-          full_email TEXT,
+          email_content TEXT,
           embedding VECTOR(256),
           ext_file_name TEXT,
           asset_id TEXT,

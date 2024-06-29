@@ -27,13 +27,16 @@ export class EmailEmbeddingController {
       const filePath = path.join(directoryPath, file);
       const fileContent = fs.readFileSync(filePath, "utf-8");
 
+      // Extract email content
+      const emailContent = this.extractEmailContent(fileContent);
+
       let vector;
 
       try {
         const embedding = await openai.embeddings.create({
           model: "text-embedding-3-large",
           dimensions: 256,
-          input: fileContent,
+          input: emailContent,
           encoding_format: "float",
         });
 
@@ -47,7 +50,7 @@ export class EmailEmbeddingController {
         emailExtractionRepository.create({
           ext_file_id: extId,
           ext_file_name: file,
-          full_email: fileContent,
+          email_content: emailContent,
           embedding: pgvector.toSql(vector),
         })
       );
@@ -57,5 +60,19 @@ export class EmailEmbeddingController {
     await emailExtractionRepository.upsert(emailExtractions, ["ext_file_id"]);
 
     response.send({ message: "Emails processed and stored successfully." });
+  }
+
+  private extractEmailContent(fullEmail: string): string {
+    // Regex to match everything after the last occurrence of "X-FileName:"
+    const contentRegex = /X-FileName:.*?\n([\s\S]*)/;
+    const match = fullEmail.match(contentRegex);
+
+    if (match && match[1]) {
+      // Trim leading and trailing whitespace
+      return match[1].trim();
+    }
+
+    // If no match found, return the original content
+    return fullEmail;
   }
 }
