@@ -277,19 +277,6 @@ export class EmailExtractionController {
     }
   }
 
-  async alterEmbeddingColumnType(request: Request, response: Response) {
-    try {
-      await AppDataSource.query("CREATE EXTENSION IF NOT EXISTS vector");
-      await AppDataSource.query(
-        "ALTER TABLE email_extraction ALTER COLUMN embedding TYPE vector(256) USING embedding::vector(256)"
-      );
-      response.send("Embedding column type altered successfully");
-    } catch (error) {
-      console.error("Error altering embedding column type:", error);
-      response.status(500).send("Error altering embedding column type");
-    }
-  }
-
   async all(request: Request, response: Response, next: NextFunction) {
     try {
       const allEmails = await AppDataSource.getRepository(

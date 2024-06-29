@@ -31,10 +31,18 @@ AppDataSource.initialize()
       }
     }
 
-    // Run migrations
+    // Run migrations/ensure vector data type
     try {
+      // Add this line to clear the migrations table
+      await AppDataSource.query("TRUNCATE TABLE migrations");
+
       await AppDataSource.runMigrations();
       console.log("Migrations have been run successfully!");
+
+      // const migrationRows = await AppDataSource.query(
+      //   "SELECT * FROM migrations"
+      // );
+      // console.log("Migrations in the database:", migrationRows);
     } catch (error) {
       console.error("Error running migrations:", error);
       process.exit(1); // Exit the process if migrations fail

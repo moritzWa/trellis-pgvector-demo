@@ -84,13 +84,6 @@ export const Routes = [
     controller: EmailExtractionController,
     action: "checkEmbeddingColumnType",
   },
-  {
-    method: "post",
-    route: "/alter-embedding-type",
-    controller: EmailExtractionController,
-    action: "alterEmbeddingColumnType",
-  },
-
   // embedding
   {
     method: "post",

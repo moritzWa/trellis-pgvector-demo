@@ -14,7 +14,7 @@ export class EmailExtraction {
   full_email: string;
 
   @Column("text")
-  embedding: string; // vector type not supported: https://github.com/typeorm/typeorm/issues/10056
+  embedding: string; // actually VECTOR(256). vector type not supported: https://github.com/typeorm/typeorm/issues/10056
 
   @Column()
   ext_file_name: string;

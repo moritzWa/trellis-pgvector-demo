@@ -11,7 +11,8 @@ export const AppDataSource = new DataSource({
   password: "postgres",
   database: "postgres",
   synchronize: false, // we create them ourselves in the migration
-  logging: false,
+  // logging: true,
+  logging: ["error", "query", "schema"],
   entities: [User, EmailExtraction],
   migrations: [__dirname + "/migration/*.ts"],
   migrationsRun: true,

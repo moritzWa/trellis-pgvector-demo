@@ -6,25 +6,28 @@ export class CreateEmailExtractionTable1719502784945
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Check if the embedding column is already of type vector
-    const result = await queryRunner.query(`
-        SELECT data_type 
+    // Check if the table exists
+    const tableExists = await queryRunner.hasTable("email_extraction");
+
+    if (tableExists) {
+      console.log(
+        "email_extraction table already exists, checking embedding column"
+      );
+      const result = await queryRunner.query(`
+        SELECT data_type, udt_name
         FROM information_schema.columns 
         WHERE table_name = 'email_extraction' 
-        AND column_name = 'embedding';
+        AND column_name = 'embedding'
       `);
 
-    console.log("result", result);
+      console.log("Column info:", result[0]);
 
-    if (
-      result.length > 0 &&
-      result[0].data_type === "USER-DEFINED" &&
-      result[0].udt_name === "vector"
-    ) {
-      console.log(
-        "The 'embedding' column is already of type 'vector'. Skipping migration."
-      );
-      return;
+      if (result.length > 0 && result[0].data_type === "USER-DEFINED") {
+        console.log(
+          "The 'embedding' column appears to be of type 'vector'. Skipping table creation."
+        );
+        return;
+      }
     }
 
     await queryRunner.query(`
@@ -56,7 +59,8 @@ export class CreateEmailExtractionTable1719502784945
         FROM information_schema.columns 
         WHERE table_name = 'email_extraction';
       `);
-    console.log("Table structure after migration:", tableStructure);
+
+    // console.log("Table structure after migration:", tableStructure);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
