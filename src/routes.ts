@@ -43,7 +43,7 @@ export const Routes = [
     action: "all",
   },
   {
-    method: "post",
+    method: "put",
     route: "/upload-emails",
     controller: EmailExtractionController,
     action: "uploadEmailAssets",
@@ -55,19 +55,19 @@ export const Routes = [
     action: "initiateTransformation",
   },
   {
-    method: "post",
+    method: "get",
     route: "/check-upload-status",
     controller: AssetStatusController,
     action: "checkUploadStatus",
   },
   {
-    method: "post",
+    method: "get",
     route: "/fetch-transformation-results",
     controller: EmailExtractionController,
     action: "fetchAndSaveTransformationResults",
   },
   {
-    method: "post",
+    method: "get",
     route: "/search-emails",
     controller: EmailExtractionController,
     action: "search",
