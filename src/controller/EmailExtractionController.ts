@@ -14,14 +14,14 @@ import {
 const FormData = require("form-data");
 
 export class EmailExtractionController {
-  private projectName = "test_50_files";
-
   private emailExtractionRepository =
     AppDataSource.getRepository(EmailExtraction);
 
   // upload
 
   async uploadEmailAssets(request: Request, response: Response) {
+    const { projectName } = request.body;
+
     const batchSize = 2;
     const directoryPath = path.join(__dirname, "..", "assets");
     const allFiles = fs
@@ -44,7 +44,7 @@ export class EmailExtractionController {
         formData.append("file_types", "txt");
       });
 
-      formData.append("proj_name", this.projectName);
+      formData.append("proj_name", projectName);
 
       try {
         const res = await axios.post(
@@ -77,6 +77,8 @@ export class EmailExtractionController {
   // tranform
 
   async initiateTransformation(request: Request, response: Response) {
+    const { projectName } = request.body;
+
     const headers = {
       Authorization: process.env.TRELLIS_API_KEY,
       Accept: "application/json",
@@ -87,7 +89,7 @@ export class EmailExtractionController {
       const initiateResponse = await axios.post(
         "https://api.usetrellis.co/v1/transform/initiate",
         {
-          proj_name: this.projectName,
+          proj_name: projectName,
           transform_params: transformationParams,
         },
         { headers }

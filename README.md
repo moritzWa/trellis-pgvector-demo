@@ -63,7 +63,11 @@ Run `npm run start` to start the server
    - Place your email assets in `./assets` (Enron demo data provided)
    - Run:
      ```
-     curl -X PUT http://localhost:3000/upload-emails
+     curl -X PUT http://localhost:3000/upload-emails \
+     -H "Content-Type: application/json" \
+     -d '{
+       "projectName": "your_project_name",
+     }'
      ```
    - Save the returned `assetIds` array for future use
 
@@ -90,7 +94,9 @@ Run `npm run start` to start the server
      ```
      curl -X POST http://localhost:3000/transform-emails \
      -H "Content-Type: application/json" \
-     -d '{"assetIds": ["id1", "id2", "id3"]}'
+     -d '{
+       "projectName": "your_project_name",
+     }'
      ```
    - Save the returned `transformationId` for future use
 
