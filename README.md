@@ -69,15 +69,13 @@ Run `npm run start` to start the server
        "projectName": "your_project_name",
      }'
      ```
-   - Save the returned `assetIds` array for future use
 
 2. Check the status of the Trellis upload (optional)
 
    - Run:
      ```
-     curl -X GET "http://localhost:3000/check-upload-status?assetIds=id1,id2,id3"
+     curl -X GET "http://localhost:3000/check-upload-status?projectName=your_project_name"
      ```
-   - Replace `id1,id2,id3` with the actual asset IDs returned from step 1
 
 ## Embedding and Trellis Tranformation
 
@@ -106,7 +104,7 @@ Run `npm run start` to start the server
      ```
      curl -X GET http://localhost:3000/fetch-transformation-results?transformationId=your_transformation_id
      ```
-     Replace `your_transformation_id` with the ID from step 3
+     Replace `your_transformation_id` with the ID from step 4
 
 6. Fetch and save the Trellis transformation results to existing data
 
@@ -120,10 +118,10 @@ Run `npm run start` to start the server
 7. Search for emails using column filter and vector search
    - Run:
      ```
-     curl -X POST http://localhost:3000/search-emails \
+     curl http://localhost:3000/search-emails \
      -H "Content-Type: application/json" \
      -d '{
-       "query": "authorities restricting business activity",
+       "query": "about state authorities restricting project",
        "filters": {
          "emotional_tone": "neutral",
          "compliance_risk": true

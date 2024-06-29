@@ -7,42 +7,41 @@ interface AssetStatus {
 
 export class AssetStatusController {
   async checkUploadStatus(request: Request, response: Response) {
-    const assetIds = request.query.assetIds as string[];
+    const projectName = request.query.projectName as string;
 
-    const asset_status_url = "https://api.usetrellis.co/v1/assets/status/";
+    if (!projectName) {
+      return response.status(400).send("Project name is required");
+    }
+
+    const assets_url = `https://api.usetrellis.co/v1/assets/${projectName}`;
     const headers = {
       Authorization: process.env.TRELLIS_API_KEY,
       Accept: "application/json",
-      "Content-Type": "application/json",
     };
 
-    let allProcessed = false;
+    try {
+      // Fetch asset IDs for the project
+      const assetsResponse = await axios.get(assets_url, { headers });
+      const assetIds = assetsResponse.data.data;
 
-    while (!allProcessed) {
-      try {
-        const statusResponse = await axios.post(
-          asset_status_url,
-          { ids: assetIds },
-          { headers }
-        );
-        const statuses: Record<string, AssetStatus> = statusResponse.data.data;
-        allProcessed = Object.values(statuses).every(
-          (status) =>
-            status.status === "processed" || status.status === "not_processed"
-        );
-
-        if (!allProcessed) {
-          console.log("Not all assets processed. Waiting...");
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Sleep for 1 second
-        } else {
-          console.log("All assets processed:", statuses);
-          response.json(statuses);
-        }
-      } catch (error) {
-        console.error("Failed to retrieve asset statuses:", error);
-        response.status(500).send("Failed to retrieve asset statuses");
-        break;
+      if (assetIds.length === 0) {
+        return response.status(404).send("No assets found for the project");
       }
+
+      // Check status for each asset
+      const asset_status_url = "https://api.usetrellis.co/v1/assets/status/";
+      const statusResponse = await axios.post(
+        asset_status_url,
+        { ids: assetIds },
+        { headers: { ...headers, "Content-Type": "application/json" } }
+      );
+      const statuses: Record<string, AssetStatus> = statusResponse.data.data;
+
+      console.log("Asset statuses:", statuses);
+      response.json(statuses);
+    } catch (error) {
+      console.error("Failed to retrieve asset statuses:", error);
+      response.status(500).send("Failed to retrieve asset statuses");
     }
   }
 }

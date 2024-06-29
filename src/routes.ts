@@ -67,7 +67,7 @@ export const Routes = [
     action: "fetchAndSaveTransformationResults",
   },
   {
-    method: "get",
+    method: "post",
     route: "/search-emails",
     controller: EmailExtractionController,
     action: "search",
