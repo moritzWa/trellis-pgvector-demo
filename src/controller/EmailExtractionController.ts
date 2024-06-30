@@ -124,9 +124,6 @@ export class EmailExtractionController {
       const results: Record<string, EmailTransformationResult[]> =
         resultsResponse.data.data;
 
-      // Log the results
-      console.log("Transformation Results:", results);
-
       for (const [assetId, resultArray] of Object.entries(results)) {
         for (const result of resultArray) {
           const existingEmail = await this.emailExtractionRepository.findOne({
@@ -148,9 +145,6 @@ export class EmailExtractionController {
               emotional_tone: result.emotional_tone,
               date: result.date,
             };
-
-            console.log("Before update:", existingEmail);
-            console.log("Update data:", updateData);
 
             // Update the existing record
             const updateResult = await this.emailExtractionRepository.update(

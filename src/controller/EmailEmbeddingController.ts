@@ -22,7 +22,11 @@ export class EmailEmbeddingController {
 
     const emailExtractions: EmailExtraction[] = [];
 
-    for (const file of files) {
+    console.log(`Found ${files.length} files to process.`);
+
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      console.log(`Processing file ${index + 1} of ${files.length}: ${file}`);
       const extId = file.replace(".txt", "");
       const filePath = path.join(directoryPath, file);
       const fileContent = fs.readFileSync(filePath, "utf-8");
@@ -42,7 +46,7 @@ export class EmailEmbeddingController {
 
         vector = embedding.data[0].embedding;
       } catch (error) {
-        console.error("Failed to generate embedding:", error);
+        console.error(`Failed to generate embedding for file ${file}:`, error);
         continue; // Skip this file and continue with the next one
       }
 
@@ -56,8 +60,9 @@ export class EmailEmbeddingController {
       );
     }
 
-    // Perform bulk upsert
+    console.log("Performing bulk upsert...");
     await emailExtractionRepository.upsert(emailExtractions, ["ext_file_id"]);
+    console.log("Bulk upsert completed.");
 
     response.send({ message: "Emails processed and stored successfully." });
   }
