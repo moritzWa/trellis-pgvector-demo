@@ -138,6 +138,8 @@ Note: Make sure to replace placeholder IDs with actual IDs returned from the API
 
 # Other API Endpoints
 
+You can also find most of these requests in this [Postman collection](https://elements.getpostman.com/redirect?entityId=8480127-d2d176ef-21f4-483b-8844-43c6a86a7099&entityType=collection).
+
 ## Seeding Data
 
 To seed the database with sample data:
