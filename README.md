@@ -52,7 +52,9 @@ You can get a Trellis API key [here](https://usetrellis.co).
 
 ## Server
 
-Run `npm run start` to start the server
+Run `npm install` to install the dependencies.
+
+Run `npm run start` to start the server.
 
 # Trellis pg vector Demo Steps
 
@@ -66,7 +68,7 @@ Run `npm run start` to start the server
      curl -X PUT http://localhost:3000/upload-emails \
      -H "Content-Type: application/json" \
      -d '{
-       "projectName": "your_project_name",
+       "projectName": "your_project_name"
      }'
      ```
 
@@ -93,7 +95,7 @@ Run `npm run start` to start the server
      curl -X POST http://localhost:3000/transform-emails \
      -H "Content-Type: application/json" \
      -d '{
-       "projectName": "your_project_name",
+       "projectName": "your_project_name"
      }'
      ```
    - Save the returned `transformationId` for future use
@@ -129,6 +131,8 @@ Run `npm run start` to start the server
        "limit": 3
      }'
      ```
+   - This is using L2 distance (Euclidean distance) for vector similarity search
+   - Meaning lower `similarity_score` results are more similar
 
 Note: Make sure to replace placeholder IDs with actual IDs returned from the API calls.
 
