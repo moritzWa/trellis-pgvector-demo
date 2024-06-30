@@ -134,7 +134,51 @@ Note: Make sure to replace placeholder IDs with actual IDs returned from the API
 
 # Other API Endpoints
 
-<!-- todo -->
+## Seeding Data
+
+To seed the database with sample data:
+
+```
+curl -X POST http://localhost:3000/seeder
+```
+
+This will insert predefined email data into the database.
+
+## Check Embedding Column Type
+
+To check the data type of the embedding column:
+
+```
+curl -X GET http://localhost:3000/check-embedding-type
+```
+
+This endpoint is useful for verifying that the embedding column is correctly set up as a vector type.
+
+## Fetch All Emails
+
+To retrieve all emails from the database:
+
+```
+curl -X GET http://localhost:3000/emails
+```
+
+This will return a JSON array of all email records in the database.
+
+## Save a New Email
+
+To save a new email to the database:
+
+```
+curl -X POST http://localhost:3000/emails \
+-H "Content-Type: application/json" \
+-d '{
+  "ext_file_id": "example_id",
+  "email_content": "Example email content",
+  "email_from": "sender@example.com"
+}'
+```
+
+Note: Make sure to include all required fields in the JSON payload.
 
 # Note on pgvector Installation
 
